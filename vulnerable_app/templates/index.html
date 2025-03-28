@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broken App</title>
+</head>
+<body>
+    <h1>Welcome to the Broken App!</h1>
+
+    {% if username %}
+        <p>Logged in as: {{ username }}</p>
+    {% else %}
+        <p>No one is logged in.</p>
+    {% endif %}
+
+    <form method="GET" action="{% url 'user_input' %}">
+        <label for="input">Enter something:</label>
+        <input type="text" id="input" name="input">
+        <button type="submit">Submit</button>
+    </form>
+
+    <form method="POST" action="/change-role/1/">
+        {% csrf_token %}
+        <label for="role">Role:</label>
+        <input type="text" name="role" id="role" required>
+        <button type="submit">Change Role</button>
+    </form>
+
+    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'logout' %}">Logout</a>
+    <a href="{% url 'register' %}">Register</a>
+
+    <h2>Restricted Content</h2>
+    <a href="{% url 'restricted' %}">Go to Restricted View</a>
+</body>
+</html>
