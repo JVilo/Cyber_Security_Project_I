@@ -11,6 +11,11 @@ from .forms import UserRegistrationForm, ProfileForm
 
 def trigger_error(request):
     raise Exception("This is a test error triggered by a button click!")
+# Uncaught Server Error Endpoint
+# def trigger_error(request):
+#     if not request.user.is_superuser:
+#         return HttpResponse("Not allowed", status=403)
+#     raise Exception("Simulated error.")
 
 # Login view
 def login_view(request):
