@@ -83,7 +83,7 @@ DATABASES = {
 }
 
 
-# 3. Security Misconfiguration - Debug mode enabled (vulnerable version)
+# Security Misconfiguration - Debug mode enabled (vulnerable version)
 # SECURITY WARNING: don't run with debug turned on in production!
 # Vulnerable version, debug should be False in production
 # DEBUG = False  # Fix: Debug mode should be off in production for security reasons

@@ -101,12 +101,12 @@ def home(request):
         # If no user is logged in
         return render(request, 'index.html', {'username': None})
 
-# 1. Broken Access Control - No authentication check (vulnerable version)
+# Broken Access Control - No authentication check (vulnerable version)
 def restricted_view(request):
     # Vulnerability: Anyone can access this view
     return HttpResponse("This is a restricted view.")
 
-# 1. Broken Access Control - Authentication check (fixed version)
+# Broken Access Control - Authentication check (fixed version)
 # @login_required
 # def restricted_view(request):
 #     # Fix: Restrict access to authenticated users
@@ -117,16 +117,16 @@ def user_input_view(request):
     user_input = request.GET.get("input", "")
     return HttpResponse(f"User input: {user_input}")  # Vulnerable to XSS
 
-# 2. Injection (XSS) - Fixed version
+# Injection (XSS) - Fixed version
 # def user_input_view(request):
 #     user_input = request.GET.get("input", "")
 #     safe_input = escape(user_input)  # Fix: Escape user input to prevent XSS
 #     return HttpResponse(f"User input: {safe_input}")
 
 
-# 4. Identification and Authentication Failures - Weak password policy (vulnerable version)
+# Identification and Authentication Failures - Weak password policy (vulnerable version)
 # In settings.py, weak password validators are present by default. Let's add a vulnerable view that can change user roles.
-# 5. Insecure Design (Broken Access Control on Role Changing)
+# Insecure Design (Broken Access Control on Role Changing)
 def is_admin(user):
     return user.groups.filter(name='Admin').exists()
 
@@ -148,7 +148,7 @@ def change_user_role(request, user_id):
     else:
         return HttpResponse("No role provided.", status=400)
 
-# 4. Identification and Authentication Failures - Strong password policy and role-based access control (fixed version)
+# Identification and Authentication Failures - Strong password policy and role-based access control (fixed version)
 # @user_passes_test(is_admin)
 # def change_user_role(request, user_id):
 #     # Fix: Only users with specific permission can change roles
