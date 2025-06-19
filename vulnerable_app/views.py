@@ -101,27 +101,37 @@ def home(request):
         # If no user is logged in
         return render(request, 'index.html', {'username': None})
 
-# Broken Access Control - No authentication check (vulnerable version)
+# Flaw 1: Broken Access Control (vulnerable)
 def restricted_view(request):
-    # Vulnerability: Anyone can access this view
-    return HttpResponse("This is a restricted view.")
+    from django.contrib.auth.models import User
+    users = User.objects.all()
+    html = "<h2>Internal User Directory</h2><ul>"
+    for user in users:
+        html += f"<li>User ID: {user.id} - Username: {user.username}</li>"
+    html += "</ul>"
+    return HttpResponse(html)
 
 # Broken Access Control - Authentication check (fixed version)
-# @login_required
-# def restricted_view(request):
-#     # Fix: Restrict access to authenticated users
-#     return HttpResponse("This is a restricted view.")
+#@login_required
+#def restricted_view(request):
+#    user = request.user
+#    html = "<h2>Personal Dashboard</h2>"
+#    html += f"<p>User ID: {user.id}</p>"
+#    html += f"<p>Username: {user.username}</p>"
+#    html += f"<p>Date joined: {user.date_joined}</p>"
+#    return HttpResponse(html)
 
 # 2. Injection (XSS) - Vulnerable version
-def user_input_view(request):
-    user_input = request.GET.get("input", "")
-    return HttpResponse(f"User input: {user_input}")  # Vulnerable to XSS
+#def user_input_view(request):
+#    input_text = request.GET.get('input', '')
+#    html = f"<html><body><h2>You entered:</h2>{input_text}</body></html>"
+#    return HttpResponse(html)
 
 # Injection (XSS) - Fixed version
-# def user_input_view(request):
-#     user_input = request.GET.get("input", "")
-#     safe_input = escape(user_input)  # Fix: Escape user input to prevent XSS
-#     return HttpResponse(f"User input: {safe_input}")
+def user_input_view(request):
+    input_text = escape(request.GET.get('input', ''))
+    html = f"<html><body><h2>You entered:</h2>{input_text}</body></html>"
+    return HttpResponse(html)
 
 
 # Identification and Authentication Failures - Weak password policy (vulnerable version)
