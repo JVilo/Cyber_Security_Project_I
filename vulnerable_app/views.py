@@ -122,16 +122,16 @@ def restricted_view(request):
 #    return HttpResponse(html)
 
 # 2. Injection (XSS) - Vulnerable version
-#def user_input_view(request):
-#    input_text = request.GET.get('input', '')
-#    html = f"<html><body><h2>You entered:</h2>{input_text}</body></html>"
-#    return HttpResponse(html)
-
-# Injection (XSS) - Fixed version
 def user_input_view(request):
-    input_text = escape(request.GET.get('input', ''))
+    input_text = request.GET.get('input', '')
     html = f"<html><body><h2>You entered:</h2>{input_text}</body></html>"
     return HttpResponse(html)
+
+# Injection (XSS) - Fixed version
+#def user_input_view(request):
+#    input_text = escape(request.GET.get('input', ''))
+#    html = f"<html><body><h2>You entered:</h2>{input_text}</body></html>"
+#    return HttpResponse(html)
 
 
 # Identification and Authentication Failures - Weak password policy (vulnerable version)
