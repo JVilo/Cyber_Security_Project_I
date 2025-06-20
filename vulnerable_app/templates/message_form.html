@@ -1,0 +1,7 @@
+<form method="post">
+    {% csrf_token %}
+    <textarea name="content"></textarea>
+    <button type="submit">Submit</button>
+</form>
+<a href="/">Back to Main Page</a><br>
+<a href="{% url 'show_messages' %}">View All Messages</a>

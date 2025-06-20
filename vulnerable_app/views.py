@@ -7,6 +7,8 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileForm
+from .models import Message
+from django.db import models
 
 
 def trigger_error(request):
@@ -122,16 +124,60 @@ def restricted_view(request):
 #    return HttpResponse(html)
 
 # 2. Injection (XSS) - Vulnerable version
-def user_input_view(request):
-    input_text = request.GET.get('input', '')
-    html = f"<html><body><h2>You entered:</h2>{input_text}</body></html>"
+@login_required
+def message_form_view(request):
+    if request.method == 'POST':
+        content = request.POST.get('content', '')
+        Message.objects.create(content=content, user=request.user)
+        return redirect('show_messages')
+    return render(request, 'message_form.html')
+
+@login_required
+def show_messages(request):
+    messages = Message.objects.filter(models.Q(user=request.user) | models.Q(user=None))
+    html = "<h2>Messages</h2><ul>"
+    for message in messages:
+        html += f"<li>{message.content}</li>"  # NO ESCAPE = XSS RISK
+    html += "</ul>"
     return HttpResponse(html)
 
-# Injection (XSS) - Fixed version
-#def user_input_view(request):
-#    input_text = escape(request.GET.get('input', ''))
-#    html = f"<html><body><h2>You entered:</h2>{input_text}</body></html>"
+@login_required
+def leak_all_messages(request):
+    messages = Message.objects.all()
+    html = "<h2>All Messages (Leaked)</h2><ul>"
+    for msg in messages:
+        html += f"<li>{msg.user.username}: {msg.content}</li>"
+    html += "</ul>"
+    return HttpResponse(html)
+
+# 2. Injection (XSS) - Fixed version
+#@login_required
+#def message_form_view(request):
+#    if request.method == 'POST':
+#        content = request.POST.get('content', '')
+#        Message.objects.create(content=content, user=request.user)
+#        return redirect('show_messages')
+#    return render(request, 'message_form.html')
+
+#@login_required
+#def show_messages(request):
+#    messages = Message.objects.filter(user=request.user)
+#    html = "<h2>Your Messages</h2><ul>"
+#    for message in messages:
+#        html += f"<li>{escape(message.content)}</li>"  # Escape user content
+#    html += "</ul>"
 #    return HttpResponse(html)
+
+# ❌ Remove this ->
+# @login_required
+# def leak_all_messages(request):
+#     messages = Message.objects.all()
+#     html = "<h2>All Messages (Leaked)</h2><ul>"
+#     for msg in messages:
+#         html += f"<li>{escape(msg.user.username)}: {escape(msg.content)}</li>"
+#     html += "</ul>"
+#     return HttpResponse(html)
+#<-
 
 
 # Identification and Authentication Failures - Weak password policy (vulnerable version)

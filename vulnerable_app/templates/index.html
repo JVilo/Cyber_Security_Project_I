@@ -14,11 +14,10 @@
         <p>No one is logged in.</p>
     {% endif %}
 
-    <form method="GET" action="{% url 'user_input' %}">
-        <label for="input">Enter something:</label>
-        <input type="text" id="input" name="input">
-        <button type="submit">Submit</button>
-    </form>
+    <h2>Messages</h2>
+    <a href="{% url 'message_form' %}">Post a New Message</a><br>
+    <a href="{% url 'show_messages' %}">View All Messages</a>
+
 
     <form method="POST" action="/change-role/1/">
         {% csrf_token %}

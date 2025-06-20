@@ -38,3 +38,10 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Message(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    content = models.TextField()
+
+    def __str__(self):
+        return f"{self.user.username}: {self.content[:30]}"
